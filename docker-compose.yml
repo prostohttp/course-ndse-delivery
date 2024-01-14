@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  api:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      HTTP_PORT: ${HTTP_PORT}
+      HTTP_HOST: ${HTTP_HOST}
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_EXPRESS_URL: ${MONGO_EXPRESS_URL}
+    depends_on:
+      - mongo-express
+      - mongo
+    volumes:
+      - /node_modules
+      - ./:/app
+      - /app/node_modules
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      MONGO_EXPRESS_USERNAME: ${MONGO_EXPRESS_USERNAME}
+      MONGO_EXPRESS_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+      MONGO_EXPRESS_URL: ${MONGO_EXPRESS_URL}
