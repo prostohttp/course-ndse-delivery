@@ -1,0 +1,28 @@
+const asyncHandler = require("express-async-handler");
+
+const ChatModule = require("../entities/Chat");
+
+const findChat = asyncHandler(async (req, res) => {
+	try {
+		const chatUsers = req.query.users.split(",");
+		const chat = await ChatModule.find(chatUsers);
+		res.send({ data: chat, status: "ok" });
+	} catch (error) {
+		req.send({ error: error.message, status: "error" });
+	}
+});
+
+const sendMessage = asyncHandler(async (req, res) => {
+	try {
+		const { author, receiver, text } = req.body;
+		const chat = await ChatModule.sendMessage({ author, receiver, text });
+		res.send({ data: chat, status: "ok" });
+	} catch (error) {
+		res.send({ error: error.message, status: "error" });
+	}
+});
+
+module.exports = {
+	find: findChat,
+	send: sendMessage,
+};

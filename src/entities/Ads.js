@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Ads = require("../models/Ads");
 
 class Advertisement {
@@ -7,9 +8,29 @@ class Advertisement {
 		return savedAds;
 	}
 
-	static async find(params) {}
+	static async find(params) {
+		const query = {
+			isDeleted: false,
+			$and: [],
+		};
+		if ("shortText" in params) {
+			query.$and.push({ shortText: { $regex: params.shortText } });
+		}
+		if ("description" in params) {
+			query.$and.push({ description: { $regex: params.description } });
+		}
+		if ("userId" in params) {
+			query.$and.push({ userId: new mongoose.Types.ObjectId(params.userId) });
+		}
+		return await Ads.find(query);
+	}
 
-	static async findAll() {
+	static async get(id) {
+		const ads = await Ads.findById(id);
+		return ads;
+	}
+
+	static async getAll() {
 		const ads = await Ads.find();
 		return ads;
 	}

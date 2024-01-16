@@ -37,15 +37,29 @@ const createAds = asyncHandler(async (req, res) => {
 	}
 });
 
-const findAds = asyncHandler(async (req, res) => {
-	res.send({
-		success: "ok",
-	});
+const getAds = asyncHandler(async (req, res) => {
+	try {
+		const id = req.params.id;
+		const ads = await AdsModule.get(id);
+		res.send({ data: ads, status: "ok" });
+	} catch (error) {
+		res.send({ error: error.message, status: "error" });
+	}
 });
 
-const findAllAds = asyncHandler(async (req, res) => {
+const findAds = asyncHandler(async (req, res) => {
 	try {
-		const ads = await AdsModule.findAll();
+		const queryParams = req.query;
+		const ads = await AdsModule.find(queryParams);
+		res.send({ data: ads, status: "ok" });
+	} catch (error) {
+		res.send({ error: error.message, status: "error" });
+	}
+});
+
+const getAllAds = asyncHandler(async (req, res) => {
+	try {
+		const ads = await AdsModule.getAll();
 		res.send({ data: ads, status: "ok" });
 	} catch (error) {
 		res.send({ error: error.message, status: "error" });
@@ -65,6 +79,7 @@ const deleteAds = asyncHandler(async (req, res) => {
 module.exports = {
 	create: createAds,
 	find: findAds,
-	findAll: findAllAds,
+	getAll: getAllAds,
 	delete: deleteAds,
+	get: getAds,
 };

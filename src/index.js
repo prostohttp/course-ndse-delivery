@@ -8,7 +8,7 @@ require("dotenv").config();
 
 const userRouter = require("./routes/userRouter");
 const adsRouter = require("./routes/adsRouter");
-// const chatRouter = require("./routes/chatRouter");
+const chatRouter = require("./routes/chatRouter");
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/", userRouter);
 app.use("/api/advertisements", adsRouter);
-// app.use("/api/chat", chatRouter);
+app.use("/api/chat", chatRouter);
 
 const start = async (port, url) => {
 	await mongoose.connect(url, {

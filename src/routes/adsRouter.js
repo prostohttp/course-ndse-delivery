@@ -12,8 +12,9 @@ adsRouter.post(
 	errorHandler,
 	ads.create
 );
-adsRouter.get("/", ads.findAll);
-adsRouter.get("/:ads", ads.find);
+adsRouter.get("/", ads.getAll);
+adsRouter.get("/find", ads.find);
+adsRouter.get("/:id", ads.get);
 adsRouter.delete("/:id", ads.delete);
 
 module.exports = adsRouter;
