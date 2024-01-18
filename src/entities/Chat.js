@@ -29,7 +29,6 @@ class Chat {
 				users: [author, receiver],
 				createdAt: Date.now(),
 			});
-			await newChat.save();
 			newChat.messages.push(messageId);
 			chat = newChat;
 		} else {
@@ -39,9 +38,17 @@ class Chat {
 		return chat;
 	}
 
-	static async subscribe(func) {}
+	static async getHistory(id) {
+		const chat = await ChatModel.findById(id);
+		return chat;
+	}
 
-	static async getHistory(id) {}
+	static async subscribe(func) {
+
+	}
+
 }
+
+
 
 module.exports = Chat;

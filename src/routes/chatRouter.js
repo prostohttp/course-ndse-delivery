@@ -6,7 +6,7 @@ const adsRouter = express.Router();
 
 adsRouter.get("/", chat.find);
 adsRouter.post("/message", chat.send);
-// adsRouter.get("/:id", ads.get);
+adsRouter.get("/history/:id", chat.history);
 // adsRouter.delete("/:id", ads.delete);
 
 module.exports = adsRouter;

@@ -22,7 +22,18 @@ const sendMessage = asyncHandler(async (req, res) => {
 	}
 });
 
+const getHistory = asyncHandler(async (req, res) => {
+	try {
+		const id = req.params.id;
+		const chat = await ChatModule.getHistory(id);
+		res.send({ data: chat, status: "ok" });
+	} catch (error) {
+		res.send({ error: error.message, status: "error" });
+	}
+})
+
 module.exports = {
 	find: findChat,
 	send: sendMessage,
+	history: getHistory,
 };
