@@ -9,7 +9,7 @@ const comparePassword = async (password, hash) => {
 };
 
 const splitTags = (text) => {
-	return text.split(",").map((tag) => tag.trim().replace(/'/g, ""));
+	return text ? text.split(",").map((tag) => tag.trim().replace(/'/g, "")) : [];
 };
 
 module.exports = {

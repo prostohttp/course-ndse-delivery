@@ -10,6 +10,10 @@ class UserModule {
 		const user = await User.findOne({ email });
 		return user;
 	}
+	static async getById(id) {
+		const user = await User.findById(id);
+		return user;
+	}
 }
 
 module.exports = UserModule;

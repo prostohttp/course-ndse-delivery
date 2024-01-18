@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const fs = require("fs");
 
 const AdsModule = require("../entities/Ads");
+const UserModule = require("../entities/User");
 const { splitTags } = require("../helpers");
 
 const createAds = asyncHandler(async (req, res) => {
@@ -16,10 +17,22 @@ const createAds = asyncHandler(async (req, res) => {
 			createdAt: body.createdAt || Date.now(),
 			updatedAt: body.updatedAt || Date.now(),
 			tags: splitTags(body.tags),
-			isDeleted: body.isDeleted,
+			isDeleted: body.isDeleted || false,
 		};
 		const newAds = await AdsModule.create(ads);
-		res.send({ data: [newAds], status: "ok" });
+		const userName = await UserModule.getById(newAds.userId);
+		const responseAds = {
+			id: newAds._id,
+			shortText: newAds.shortText,
+			description: newAds.description,
+			images: newAds.images,
+			user: {
+				id: newAds.userId,
+				name: userName.name,
+			},
+			createdAt: newAds.createdAt,
+		};
+		res.send({ data: [responseAds], status: "ok" });
 	} catch (error) {
 		if (req.files) {
 			req.files.forEach((file) => {
@@ -30,7 +43,7 @@ const createAds = asyncHandler(async (req, res) => {
 				});
 			});
 		}
-		res.status(500).send({
+		res.status(401).send({
 			error: error.message,
 			status: "error",
 		});
@@ -72,7 +85,7 @@ const deleteAds = asyncHandler(async (req, res) => {
 		const ads = await AdsModule.remove(id);
 		res.send({ data: ads, status: "ok" });
 	} catch (error) {
-		res.send({ error: error.message, status: "error" });
+		res.status(401).send({ error: error.message, status: "error" });
 	}
 });
 

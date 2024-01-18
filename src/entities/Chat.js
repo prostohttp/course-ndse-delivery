@@ -38,17 +38,19 @@ class Chat {
 		return chat;
 	}
 
+	// static async getHistory(id) {
+	// 	const chat = await ChatModel.findById(id);
+	// 	const ids = chat.messages;
+	// 	const messages = messageModule.findMessages(ids);
+	// 	return messages;
+	// }
+
 	static async getHistory(id) {
-		const chat = await ChatModel.findById(id);
-		return chat;
+		const chat = await ChatModel.findById(id).populate('messages');
+		return chat.messages;
 	}
 
-	static async subscribe(func) {
-
-	}
-
+	static async subscribe(func) {}
 }
-
-
 
 module.exports = Chat;
