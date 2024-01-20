@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
+const {EventEmitter} = require("events");
 
 const ChatModel = require("../models/Chat");
 const Message = require("../models/Message");
 
 class Chat {
+	static eventEmitter = new EventEmitter();
+
 	static async find(users) {
 		const chat = await ChatModel.findOne({ users });
 		return chat;
@@ -35,22 +38,18 @@ class Chat {
 			chat.messages.push(messageId);
 		}
 		await chat.save();
+		Chat.eventEmitter.emit("newMessage", chat._id, data.text);
 		return chat;
 	}
-
-	// static async getHistory(id) {
-	// 	const chat = await ChatModel.findById(id);
-	// 	const ids = chat.messages;
-	// 	const messages = messageModule.findMessages(ids);
-	// 	return messages;
-	// }
 
 	static async getHistory(id) {
 		const chat = await ChatModel.findById(id).populate('messages');
 		return chat.messages;
 	}
 
-	static async subscribe(func) {}
+	static async subscribe(callback) {
+		Chat.eventEmitter.on("chat", callback);
+	}
 }
 
 module.exports = Chat;

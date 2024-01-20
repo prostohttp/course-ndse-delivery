@@ -35,14 +35,12 @@ class Advertisement {
 		return ads;
 	}
 
-	// static async remove(id) {
-	// 	const deletedAds = await Ads.findById(id);
-	// 	deletedAds.isDeleted = true;
-	// 	await deletedAds.save();
-	// 	return deletedAds;
-	// }
 	static async remove(id) {
-		const updatedAds = await Ads.updateOne({ _id: id }, { isDeleted: true });
+		const updatedAds = await Ads.findByIdAndUpdate(
+			id,
+			{ isDeleted: true },
+			{ new: true }
+		);
 		return updatedAds;
 	}
 }

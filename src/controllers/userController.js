@@ -18,6 +18,24 @@ const addUser = asyncHandler(async (req, res) => {
 	}
 });
 
+// const loginUser = asyncHandler(async (req, res) => {
+// 	try {
+// 		const requestUser = req.user;
+// 		const user = {
+// 			_id: requestUser._id,
+// 			email: requestUser.email,
+// 			name: requestUser.name,
+// 			contactPhone: requestUser.contactPhone,
+// 		};
+// 		res.json({ data: user, status: "ok" });
+// 	} catch (error) {
+// 		res.json({
+// 			error: error.message,
+// 			status: "error",
+// 		});
+// 	}
+// });
+
 const searchUser = asyncHandler(async (req, res) => {
 	try {
 		const email = req.params.email;
@@ -48,4 +66,5 @@ module.exports = {
 	add: addUser,
 	search: searchUser,
 	findById: findById,
+	// signin: loginUser,
 };

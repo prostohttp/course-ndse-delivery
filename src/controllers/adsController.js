@@ -9,11 +9,12 @@ const createAds = asyncHandler(async (req, res) => {
 	try {
 		const body = req.body;
 		const images = req.files;
+		const sessionId = req.session.passport.user._id;
 		const ads = {
 			shortText: body.shortText,
 			description: body.description,
 			images: images.map((image) => image.filename),
-			userId: body.userId,
+			userId: sessionId,
 			createdAt: body.createdAt || Date.now(),
 			updatedAt: body.updatedAt || Date.now(),
 			tags: splitTags(body.tags),
@@ -81,9 +82,16 @@ const getAllAds = asyncHandler(async (req, res) => {
 
 const deleteAds = asyncHandler(async (req, res) => {
 	try {
+		const sessionId = req.session.passport.user._id;
 		const id = req.params.id;
-		const ads = await AdsModule.remove(id);
-		res.send({ data: ads, status: "ok" });
+		const ads = await AdsModule.get(id);
+		if (sessionId === ads.userId.toString()) {
+			res.send({ data: await AdsModule.remove(id), status: "ok" });
+		} else {
+			res
+				.status(403)
+				.json({ error: "Вы не автор объявления. Удаление запрещено!" });
+		}
 	} catch (error) {
 		res.status(401).send({ error: error.message, status: "error" });
 	}
