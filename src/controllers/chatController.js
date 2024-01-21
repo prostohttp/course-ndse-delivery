@@ -14,9 +14,10 @@ const findChat = asyncHandler(async (req, res) => {
 
 const sendMessage = asyncHandler(async (req, res) => {
 	try {
-		const { author, receiver, text } = req.body;
-		const chat = await ChatModule.sendMessage({ author, receiver, text });
-		res.send({ data: chat, status: "ok" });
+		const author = req.session.passport.user._id;
+		const { receiver, text } = req.body;
+		const message = await ChatModule.sendMessage({ author, receiver, text });
+		res.send({ data: message, status: "ok" });
 	} catch (error) {
 		res.send({ error: error.message, status: "error" });
 	}

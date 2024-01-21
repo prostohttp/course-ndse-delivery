@@ -38,8 +38,8 @@ class Chat {
 			chat.messages.push(messageId);
 		}
 		await chat.save();
-		Chat.eventEmitter.emit("newMessage", chat._id, data.text);
-		return chat;
+		Chat.eventEmitter.emit("newMessage", chat._id, newMessage);
+		return newMessage;
 	}
 
 	static async getHistory(id) {
@@ -48,7 +48,7 @@ class Chat {
 	}
 
 	static async subscribe(callback) {
-		Chat.eventEmitter.on("chat", callback);
+		Chat.eventEmitter.on("newMessage", callback);
 	}
 }
 

@@ -7,11 +7,13 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const session = require("./config/session");
 
+
 const passport = require("./config/passport");
 const userRouter = require("./routes/userRouter");
 const adsRouter = require("./routes/adsRouter");
 const chatRouter = require("./routes/chatRouter");
 const Chat = require("./entities/Chat");
+const ChatModel = require("./models/Chat");
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});
@@ -26,12 +28,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/", userRouter);
 app.use("/api/advertisements", adsRouter);
 app.use("/api/chat", chatRouter);
-app.use("/", (req, res) => {
-	res.json({message: "Главная страница"})
-})
+
+io.engine.use(session);
 
 io.on("connection", (socket) => {
-	socket.on("geHistory", async (id, currentUserId) => {
+	const currentUserId = socket.request.session.passport.user._id;
+	socket.on("getHistory", async (id) => {
 		const chat = await ChatModel.findOne({
 			users: { $all: [currentUserId, id] },
 		});
@@ -41,10 +43,9 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("sendMessage", async (receiver, text) => {
-		const data = await Chat.sendMessage({ author, receiver, text });
+		const data = await Chat.sendMessage({ currentUserId, receiver, text });
 		socket.emit("newMessage", data);
 	});
-	socket.on("newMessage", (message) => {});
 });
 
 const start = async (port, url) => {
