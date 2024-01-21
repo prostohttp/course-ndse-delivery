@@ -31,7 +31,7 @@ const getHistory = asyncHandler(async (req, res) => {
 	} catch (error) {
 		res.send({ error: error.message, status: "error" });
 	}
-})
+});
 
 module.exports = {
 	find: findChat,

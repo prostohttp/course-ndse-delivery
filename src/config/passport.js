@@ -10,9 +10,7 @@ const verify = async (email, password, done) => {
 			return done(null, false);
 		}
 		const correctPassword = await comparePassword(password, user.passwordHash);
-		return correctPassword
-			? done(null, user)
-			: done(null, false);
+		return correctPassword ? done(null, user) : done(null, false);
 	} catch (error) {
 		return done(error, false);
 	}

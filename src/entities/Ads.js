@@ -39,7 +39,7 @@ class Advertisement {
 		const updatedAds = await Ads.findByIdAndUpdate(
 			id,
 			{ isDeleted: true },
-			{ new: true }
+			{ new: true },
 		);
 		return updatedAds;
 	}

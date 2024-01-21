@@ -7,7 +7,6 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const session = require("./config/session");
 
-
 const passport = require("./config/passport");
 const userRouter = require("./routes/userRouter");
 const adsRouter = require("./routes/adsRouter");

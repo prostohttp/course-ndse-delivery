@@ -12,11 +12,11 @@ adsRouter.post(
 	isAuthenticated,
 	fileMulter.array("images", 10),
 	errorHandler,
-	ads.create
+	ads.create,
 );
 adsRouter.get("/", ads.getAll);
 adsRouter.get("/find", ads.find);
 adsRouter.get("/:id", ads.get);
-adsRouter.delete("/:id",isAuthenticated, ads.delete);
+adsRouter.delete("/:id", isAuthenticated, ads.delete);
 
 module.exports = adsRouter;

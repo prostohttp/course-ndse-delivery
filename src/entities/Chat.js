@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {EventEmitter} = require("events");
+const { EventEmitter } = require("events");
 
 const ChatModel = require("../models/Chat");
 const Message = require("../models/Message");
@@ -43,7 +43,7 @@ class Chat {
 	}
 
 	static async getHistory(id) {
-		const chat = await ChatModel.findById(id).populate('messages');
+		const chat = await ChatModel.findById(id).populate("messages");
 		return chat.messages;
 	}
 

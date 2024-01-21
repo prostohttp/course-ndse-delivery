@@ -44,9 +44,9 @@ const advertisementSchema = new mongoose.Schema({
 	},
 });
 
-advertisementSchema.statics.findAdsByRegex = async function(field, regex) {
-  const ads = await this.find({ [field]: { $regex: regex } });
-  return ads;
+advertisementSchema.statics.findAdsByRegex = async function (field, regex) {
+	const ads = await this.find({ [field]: { $regex: regex } });
+	return ads;
 };
 
 const Advertisement = mongoose.model("Advertisement", advertisementSchema);
