@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { EventEmitter } = require("events");
 
 const ChatModel = require("../models/Chat");
+const UserModel = require("../models/User");
 const Message = require("../models/Message");
 
 class Chat {
@@ -14,6 +15,10 @@ class Chat {
 
 	static async sendMessage(data) {
 		const { author, receiver, text } = data;
+		const foundedReceiver = await UserModel.findOne({_id: receiver}, "_id");
+		if(!foundedReceiver) {
+			return null;
+		}
 		let chat = await ChatModel.findOne({
 			users: { $all: [author, receiver] },
 		});
@@ -22,6 +27,7 @@ class Chat {
 			author,
 			sentAt: Date.now(),
 			text,
+			readAt: "",
 		});
 		await newMessage.save();
 

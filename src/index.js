@@ -1,10 +1,14 @@
 const express = require("express");
-const path = require("path");
-const { createServer } = require("http");
-const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const path = require("path");
+// const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 require("dotenv").config();
+
+const swaggerDocument = require("./swagger.json");
 const session = require("./config/session");
 
 const passport = require("./config/passport");
@@ -27,6 +31,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/", userRouter);
 app.use("/api/advertisements", adsRouter);
 app.use("/api/chat", chatRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 io.engine.use(session);
 

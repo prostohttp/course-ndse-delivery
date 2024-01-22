@@ -11,7 +11,7 @@ const addUser = asyncHandler(async (req, res) => {
 		const newUser = await UserModule.create(user);
 		res.send({ data: newUser, status: "ok" });
 	} catch (error) {
-		res.send({
+		res.status(409).send({
 			error: error.message,
 			status: "error",
 		});
@@ -40,9 +40,9 @@ const searchUser = asyncHandler(async (req, res) => {
 	try {
 		const email = req.params.email;
 		const user = await UserModule.findByEmail(email);
-		res.send({ data: user });
+		user ? res.send({ data: user }) : res.status(404).send({});
 	} catch (error) {
-		res.send({
+		res.status(404).send({
 			error: error.message,
 			status: "error",
 		});

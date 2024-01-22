@@ -1,0 +1,466 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"title": "Курсовой проект «NDSE: настройка окружения и Express.js»",
+		"version": "1.0"
+	},
+	"schemes": ["http"],
+	"host": "localhost:8080",
+	"basePath": "/api",
+	"tags": [
+		{
+			"name": "user",
+			"description": "Модуль Пользователи"
+		},
+		{
+			"name": "advertisement",
+			"description": "Модуль Объявления"
+		},
+		{
+			"name": "chat",
+			"description": "Модуль Чат"
+		}
+	],
+	"paths": {
+		"/signup": {
+			"put": {
+				"tags": ["user"],
+				"summary": "Регистрация пользователя",
+				"description": "Результатом работы функции должен быть Promise, который резолвится с объектом модели User.",
+				"parameters": [
+					{
+						"name": "user",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+				"responses": {
+					"409": {
+						"description": "Ошибка  регистрации"
+					},
+					"200": {
+						"description": "Вы зарегистрировались",
+						"schema": {
+							"type": "object",
+							"$ref": "#/definitions/User"
+						}
+					}
+				}
+			}
+		},
+		"/signin": {
+			"post": {
+				"tags": ["user"],
+				"summary": "Авторизация пользователя",
+				"description": "Результатом работы функции должен быть Promise, который резолвится с объектом модели User или ошибка авторизации.",
+				"parameters": [
+					{
+						"name": "user",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"type": "object",
+							"properties": {
+								"email": {
+									"type": "string",
+									"default": "test@test.ru"
+								},
+								"passwordHash": {
+									"type": "string",
+									"default": "test"
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"401": {
+						"description": "Ошибка  авторизации"
+					},
+					"200": {
+						"description": "Вы вошли в систему"
+					}
+				}
+			}
+		},
+		"/user/{email}": {
+			"get": {
+				"tags": ["user"],
+				"summary": "Получить пользователя по email",
+				"description": "Результатом работы функции должен быть Promise, который резолвится с объектом модели User или null, если пользователь не существует.",
+				"parameters": [
+					{
+						"type": "string",
+						"name": "email",
+						"in": "path",
+						"required": true,
+						"default": "test@test.ru"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Пользователь найден"
+					},
+					"404": {
+						"description": "Пользователь не найден"
+					}
+				}
+			}
+		},
+		"/advertisements": {
+			"post": {
+				"tags": ["advertisement"],
+				"summary": "Создание объявления (требуется Авторизация пользователя - Модуль пользователи)",
+				"description": "Результатом работы функции должен быть Promise, который резолвится с объектом модели Advertisement.",
+				"operationId": "uploadFiles",
+				"consumes": ["multipart/form-data"],
+				"produces": ["application/json"],
+				"parameters": [
+					{
+						"type": "string",
+						"name": "shortText",
+						"in": "formData",
+						"default": "Короткое описание объявления",
+						"required": true
+					},
+					{
+						"type": "string",
+						"name": "description",
+						"in": "formData",
+						"default": "Длинное описание объявления",
+						"required": false
+					},
+					{
+						"name": "images",
+						"type": "file",
+						"in": "formData",
+						"required": false,
+						"description": "Фотографии объявления"
+					}
+				],
+				"responses": {
+					"401": {
+						"description": "Не авторизован"
+					},
+					"200": {
+						"description": "Объявление создано"
+					}
+				}
+			},
+			"get": {
+				"tags": ["advertisement"],
+				"summary": "Получение всех объявлений",
+				"description": "В ответ приходит либо сообщение об ошибке, либо JSON-объект с данными:",
+				"responses": {
+					"200": {
+						"description": "Объявления найдены"
+					},
+					"404": {
+						"description": "Объявления не найдены"
+					}
+				}
+			}
+		},
+		"/advertisements/{id}": {
+			"delete": {
+				"tags": ["advertisement"],
+				"summary": "Удаление объявления (требуется Авторизация пользователя - Модуль пользователи)",
+				"description": "Функция поиска не должна удалять запись из базы данных, а только выставлять значение флага isDeleted = true",
+				"parameters": [
+					{
+						"type": "string",
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"default": "65ae2867f791e4929f16159d"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Объявление удалено"
+					},
+					"401": {
+						"description": "Требуется авторизация"
+					},
+					"404": {
+						"description": "Объявление не найдено"
+					},
+					"403": {
+						"description": "Это не ваше объявление"
+					}
+				}
+			},
+			"get": {
+				"tags": ["advertisement"],
+				"summary": "Получить объявление по id",
+				"description": "Вспомогательный роут, которого не было в задании, просто показывает объявление",
+				"parameters": [
+					{
+						"type": "string",
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"default": "65ae2867f791e4929f16159d"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Объявление удалено"
+					},
+					"404": {
+						"description": "Объявление не найдено"
+					}
+				}
+			}
+		},
+		"/advertisements/filter": {
+			"get": {
+				"tags": ["advertisement"],
+				"summary": "Поиск объявлений",
+				"description": "Результатом работы функции должен быть Promise, который резолвится с массивом объектов модели Advertisement или пустым массивом.",
+				"parameters": [
+					{
+						"name": "shortText",
+						"description": "поиск регулярным выражением",
+						"default": "Короткое описание объявления",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "description",
+						"description": "поиск регулярным выражением",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "userId",
+						"description": "точное совпадение",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "tags",
+						"description": "значение в базе данных должно включать все искомые значения (через запятую)",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Найденный объявления, если нет query параметров выводятся все объявления"
+					}
+				}
+			}
+		},
+		"/chat": {
+			"get": {
+				"tags": ["chat"],
+				"summary": "Получить чат между пользователями",
+				"description": "Результатом работы функции должен быть Promise, который является объектом модели Chat или null.",
+				"parameters": [
+					{
+						"name": "users",
+						"description": "параметр состоит из 2 id пользователей через запятую",
+						"default": "65a284b4c3d8eb3e808a3ec5,65a33c918f67b7d040635aa8",
+						"in": "query",
+						"type": "string",
+						"required": false
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Найденный чат между 2 пользователями"
+					},
+					"404": {
+						"description": "Чат не найден"
+					}
+				}
+			}
+		},
+		"/chat/history/{id}": {
+			"get": {
+				"tags": ["chat"],
+				"summary": "Получить историю чата между пользователями",
+				"description": "По id собеседника и id текущего пользователя нужно найти чат через функцию «Получить чат между пользователями». Далее для этого чата нужно получить историю сообщений и отправить её в ответ c событием chatHistory.",
+				"parameters": [
+					{
+						"type": "string",
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"default": "65a78a394f3a1afd63e42618"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "История чата"
+					},
+					"400": {
+						"description": "Нет обязательного параметра id"
+					},
+					"404": {
+						"description": "Чат не найден"
+					}
+				}
+			}
+		},
+		"/chat/message": {
+			"post": {
+				"tags": ["chat"],
+				"summary": "Отправить сообщение (требуется Авторизация пользователя - Модуль пользователи)",
+				"description": "Результатом работы функции должен быть Promise, который резолвится с объектом модели Message.",
+				"parameters": [
+					{
+						"name": "message",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"type": "object",
+							"properties": {
+								"receiver": {
+									"type": "string",
+									"default": "65a33c918f67b7d040635aa8"
+								},
+								"text": {
+									"type": "string",
+									"default": " Привет, это тестовое сообщение, отправленное через REST API"
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Сообщение отправлено"
+					},
+					"401": {
+						"description": "Не авторизован"
+					},
+					"404": {
+						"description": "Пользователь - receiver не найден"
+					},
+					"500": {
+						"description": "техническая ошибка"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"User": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string",
+					"default": "65ab5eb1724ea404d5310cd4"
+				},
+				"email": {
+					"type": "string",
+					"default": "test@test.ru"
+				},
+				"passwordHash": {
+					"type": "string",
+					"default": "test"
+				},
+				"name": {
+					"type": "string",
+					"default": "test"
+				},
+				"contactPhone": {
+					"type": "string",
+					"default": "+7(999) 888-77-66"
+				}
+			}
+		},
+		"Ads": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string",
+					"default": "65ab5eb1724ea404d5310cd3"
+				},
+				"shortText": {
+					"type": "string",
+					"default": "Короткое описание объявления"
+				},
+				"description": {
+					"type": "string",
+					"default": "Длинное описание объявления"
+				},
+				"images": {
+					"type": "array",
+					"default": []
+				},
+				"userId": {
+					"type": "string",
+					"default": "65ab5eb1724ea404d5310cd4"
+				},
+				"createdAt": {
+					"type": "string"
+				},
+				"updatedAt": {
+					"type": "string"
+				},
+				"tags": {
+					"type": "array",
+					"default": []
+				},
+				"isDeleted": {
+					"type": "boolean",
+					"default": false
+				}
+			}
+		},
+		"Chat": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string",
+					"default": "65ab5eb1724ea404d5310cd3"
+				},
+				"users": {
+					"type": "array",
+					"default": ""
+				},
+				"createdAt": {
+					"type": "string"
+				},
+				"messages": {
+					"type": "array",
+					"default": []
+				}
+			}
+		},
+		"Message": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string",
+					"default": "65ab5eb1724ea404d5310cd0"
+				},
+				"author": {
+					"type": "string",
+					"default": "65ab5eb1724ea404d5310cd4"
+				},
+				"sentAt": {
+					"type": "string"
+				},
+				"text": {
+					"type": "string",
+					"default": "Тестовое сообщение"
+				},
+				"readAt": {
+					"type": "string",
+					"default": ""
+				}
+			}
+		}
+	}
+}

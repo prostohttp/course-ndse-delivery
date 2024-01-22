@@ -44,7 +44,7 @@ const createAds = asyncHandler(async (req, res) => {
 				});
 			});
 		}
-		res.status(401).send({
+		res.status(500).send({
 			error: error.message,
 			status: "error",
 		});
@@ -55,7 +55,9 @@ const getAds = asyncHandler(async (req, res) => {
 	try {
 		const id = req.params.id;
 		const ads = await AdsModule.get(id);
-		res.send({ data: ads, status: "ok" });
+		ads
+			? res.send({ data: ads, status: "ok" })
+			: res.status(404).send({ error: "Объявление не найдено", status: "ok" });
 	} catch (error) {
 		res.send({ error: error.message, status: "error" });
 	}
@@ -64,7 +66,9 @@ const getAds = asyncHandler(async (req, res) => {
 const findAds = asyncHandler(async (req, res) => {
 	try {
 		const queryParams = req.query;
-		const ads = await AdsModule.find(queryParams);
+		const ads = await (Object.keys(queryParams).length === 0
+			? AdsModule.getAll()
+			: AdsModule.find(queryParams));
 		res.send({ data: ads, status: "ok" });
 	} catch (error) {
 		res.send({ error: error.message, status: "error" });
@@ -74,7 +78,9 @@ const findAds = asyncHandler(async (req, res) => {
 const getAllAds = asyncHandler(async (req, res) => {
 	try {
 		const ads = await AdsModule.getAll();
-		res.send({ data: ads, status: "ok" });
+		ads
+			? res.send({ data: ads, status: "ok" })
+			: res.status(404).send({ error: "Объявления не найдены", status: "ok" });
 	} catch (error) {
 		res.send({ error: error.message, status: "error" });
 	}
